@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+
 class AlarmConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -21,9 +22,12 @@ class AlarmConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-
     async def send_alarm(self, event):
         message = json.loads(event['message'])
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps(message))
+
+    @classmethod
+    def as_asgi(cls):
+        return cls
