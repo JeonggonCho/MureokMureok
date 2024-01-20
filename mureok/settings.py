@@ -102,7 +102,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mureok.wsgi.application'
-ASGI_APPLICATION = 'mureok.routing.application'
+ASGI_APPLICATION = 'mureok.asgi.application'
 
 
 # Database
