@@ -100,7 +100,80 @@ $ python manage.py runserver
 
 ## 4. 주요 기능
 
+### - 회원관리
+  - 회원가입
+  - 로그인
+  - 로그아웃
+  - 회원 프로필
+    - 팔로우/팔로잉
+    - 좋아요한 '식물', '식물원', '상품', '내가 작성한 글' 모아보기
 
+### - 미니게임
+  - 퍼즐게임 제공
+  - 난이도 조절 (퍼즐 조각 개수 달라짐)
+
+### - 커뮤니티 글 작성
+  - 커뮤니티를 통해 식물에 관련된 경험, 궁금한 점 공유
+  - 좋아요 수, 댓글 수, 조회 수, 작성 일 표시
+  - 좋아요
+  - 댓글
+  - 검색
+
+### - 공지사항 작성
+  - admin 계정을 통하여 플랫폼의 공지사항 및 이벤트 작성 가능
+
+### - 식물원
+  - 리스트 표시
+  - 카테고리 별 식물원 필터링
+  - 검색
+  - 주소, 좋아요 수, 리뷰 수, 조회 수 표시
+  - 해당 식물원 공식 홈페이지 링크 연결
+  - 식물원 위치 지도 표시
+  - SNS 공유, 링크 copy
+  - 리뷰
+    - 사진 첨부
+    - 평점
+    - 리뷰 작성 시간
+
+### - 식집사
+  - 식집사 등급 표시 (우수, 보통, 부족)
+    - 식물들의 전체적인 상태 고려
+  - 유저가 키우는 식물 등록
+    - 식물 종류는 식물 DB 목록에서 가져오기
+    - 닉네임
+    - 사진 첨부
+    - 키우기 시작한 날짜 등록
+  - 식물 상태 표시 (Good, Nice, Bad)
+    - 이모티콘
+    - 점수
+    - 물주기, 일조, 습도, 온도 각 분야별 점수 그래프
+  - 분야별 점수에 따른 적정 기준과 솔루션 제공
+  - 관리 일지 작성
+    - 달력 표시
+
+### - 식물
+  - 검색
+  - 리스트 표시
+  - 태그 검색
+  - 인기있는 식물 모아보기
+  - 카테고리 별 식물 필터링
+  - 식물 디테일 페이지
+    - 좋아요
+    - SNS 공유, 링크 copy
+    - 물주기, 일조, 습도, 온도 별 정보 및 해당 분야에 도움되는 상품 추천
+
+### - 그린샵
+  - 리스트 표시
+  - 카테고리 및 가격 필터링
+  - 좋아요 수, 리뷰 수, 가격 표시
+  - 상품 상세 페이지
+    - 좋아요
+    - 리뷰
+      - 제목, 내용
+      - 평점
+      - 사진 첨부
+    - 수량 조절
+    - 장바구니 및 구매 기능
 
 <br>
 <br>
@@ -158,10 +231,6 @@ $ python manage.py runserver
 <br>
 
 ## 9. 프로젝트 구조
-
-<details>
-<summary>프로젝트 구조 트리 보기(클릭)</summary>
-<div markdown="1">
 
 ```
 MureokMureok
@@ -307,16 +376,153 @@ MureokMureok
  └─ requirements.txt
 ```
 
-</div>
-</details>
-
 <br>
 <br>
 
 ## 10. URL 및 View 설계
 
+### accounts
+
+| 기능      | 메소드      | 요청 url                       | name            |
+|---------|----------|------------------------------|-----------------|
+| 로그인     | GET/POST | /accounts/login/             | login           |
+| 로그아웃    | POST     | /accounts/logout/            | logout          |
+| 회원가입    | GET/POST | /accounts/signup/            | signup          |
+| 회원탈퇴    | POST     | /accounts/delete/            | delete          |
+| 회원정보 수정 | GET/POST | /accounts/update/            | update          |
+| 비밀번호 수정 | GET/POST | /accounts/password/          | change_password |
+| 프로필     | GET      | /accounts/\<username>/       | profile         |
+| 팔로우     | POST     | /accounts/\<user_pk>/follow/ | follow          |
+
 <br>
-<br>
+
+### communities
+
+| 기능      | 메소드      | 요청 url                                                                                           | name                     |
+|---------|----------|--------------------------------------------------------------------------------------------------|--------------------------|
+| 인덱스     | GET      | /communities/                                                                                    | index                    |
+| 카테고리    | GET      | /communities/\<category>/                                                                        | filter_communities       |
+| 게시글 생성  | GET/POST | /communities/create/                                                                             | create                   |
+| 검색      | GET      | /communities/search/                                                                             | search                   |
+| 디테일     | GET      | /communities/\<community_pk>/                                                                    | detail                   |
+| 게시글 수정  | GET/POST | /communities/\<community_pk>/update/                                                             | update                   |
+| 게시글 삭제  | POST     | /communities/\<community_pk>/delete/                                                             | delete                   |
+| 게시글 좋아요 | POST     | /communities/\<community_pk>/likes/                                                              | likes                    |
+| 댓글 생성   | POST     | /communities/\<community_pk>/community_comment_create/                                           | community_comment_create |
+| 댓글 수정   | GET/POST | /communities/\<community_pk>/community_comments/<community_comment_pk>/community_comment_update/ | community_comment_update |
+| 댓글 삭제   | POST     | /communities/\<community_pk>/community_comments/<community_comment_pk>/community_comment_delete/ | community_comment_delete |
+| 댓글 좋아요  | POST     | /communities/\<community_pk>/community_comments/<community_comment_pk>/community_comment_likes/  | community_comment_likes  |
+
+<br/>
+
+### game
+
+| 기능     | 메소드      | 요청 url      | name        |
+|--------|----------|-------------|-------------|
+| 인덱스    | GET/POST | /game/      | index       |
+| 게임 플레이 | GET      | /game/play/ | play_puzzle |
+
+<br/>
+
+### gardens
+
+| 기능      | 메소드      | 요청 url                                              | name           |
+|---------|----------|-----------------------------------------------------|----------------|
+| 인덱스     | GET      | /gardens/                                           | index          |
+| 식물원 생성  | GET/POST | /gardens/create/                                    | create         |
+| 식물원 삭제  | POST     | /gardens/\<garden_pk>/delete/                       | delete         |
+| 식물원 좋아요 | POST     | /gardens/\<garden_pk>/like_garden/                  | like_garden    |
+| 카테고리    | GET      | /gardens/listing/                                   | listing        |
+| 디테일     | GET      | /gardens/\<garden_pk>/                              | detail         |
+| 댓글 작성   | GET/POST | /gardens/\<garden_pk>/comment/                      | comment        |
+| 댓글 수정   | GET/POST | /gardens/\<garden_pk>/comment/\<comment_pk>/update/ | comment_update |
+| 댓글 삭제   | POST     | /gardens/\<garden_pk>/comment/\<comment_pk>/delete/ | comment_delete |
+| 검색      | GET      | /gardens/search/                                    | search         |
+
+<br/>
+
+### managements
+
+| 기능        | 메소드      | 요청 url                                                                                | name                 |
+|-----------|----------|---------------------------------------------------------------------------------------|----------------------|
+| 인덱스       | GET      | /management/                                                                          | index                |
+| 관리 식물 생성  | GET/POST | /management/create/                                                                   | create               |
+| 관리 식물 수정  | GET/POST | /management/\<management_pk>/update/                                                  | update               |
+| 관리 식물 삭제  | POST     | /management/\<management_pk>/delete/                                                  | delete               |
+| 관리 식물 디테일 | GET      | /management/\<management_pk>/                                                         | detail               |
+| 관리 일지 생성  | GET/POST | /management/\<management_pk>/calenderentry_create/                                    | calenderentry_create |
+| 관리 일지 수정  | GET/POST | /management/\<management_pk>/calenderentrys/\<calenderentry_pk>/calenderentry_update/ | calenderentry_update |
+| 관리 일지 삭제  | POST     | /management/\<management_pk>/calenderentrys/\<calenderentry_pk>/calenderentry_delete/ | calenderentry_delete |
+
+<br/>
+
+### mureok
+
+| 기능      | 메소드 | 요청 url   | name   |
+|---------|-----|----------|--------|
+| 메인      | GET | /        | main   |
+| 홈       | GET | /home/   | home   |
+| 검색      | GET | /search/ | search |
+| 관리자 페이지 | -   | /admin/  | -      |
+
+<br/>
+
+### notices
+
+| 기능    | 메소드      | 요청 url                        | name   |
+|-------|----------|-------------------------------|--------|
+| 인덱스   | GET      | /notices/                     | index  |
+| 디테일   | GET      | /notices/\<notice_pk>/        | detail |
+| 공지 생성 | GET/POST | /notices/create/              | create |
+| 공지 삭제 | POST     | /notices/\<notice_pk>/delete/ | delete |
+| 공지 수정 | GET/POST | /notices/\<notice_pk>/update/ | update |
+
+<br/>
+
+### plants
+
+| 기능    | 메소드      | 요청 url                        | name           |
+|-------|----------|-------------------------------|----------------|
+| 인덱스   | GET      | /plants/                      | index          |
+| 식물 생성 | GET/POST | /plants/create/               | create         |
+| 식물 수정 | GET/POST | /plants/\<plant_pk>/update/   | update         |
+| 식물 삭제 | POST     | /plants/\<plant_pk>/delete/   | delete         |
+| 디테일   | GET      | /plants/\<plant_pk>/          | detail         |
+| 좋아요   | POST     | /plants/\<plant_pk>/likes/    | likes          |
+| 검색    | GET      | /plants/search/               | search         |
+| 필터링   | GET      | /plants/filter-plants/\<tag>/ | filter_plants  |
+| 추천    | GET      | /plants/recommendation/       | recommendation |
+| 카테고리  | GET      | /plants/category/             | category       |
+
+<br/>
+
+### sales
+
+| 기능           | 메소드      | 요청 url                                                   | name             |
+|--------------|----------|----------------------------------------------------------|------------------|
+| 인덱스          | GET      | /sales/                                                  | index            |
+| 상품 생성        | GET/POST | /sales/create/                                           | create           |
+| 상품 수정        | GET/POST | /sales/\<product_pk>/update/                             | update           |
+| 상품 삭제        | POST     | /sales/\<product_pk>/delete/                             | delete           |
+| 좋아요          | POST     | /sales/\<product_pk>/like/                               | like             |
+| 디테일          | GET      | /sales/\<product_pk>/                                    | detail           |
+| 필터           | GET      | /sales/filter/                                           | filter           |
+| 장바구니         | GET      | /sales/cart/                                             | cart             |
+| 장바구니 담기      | POST     | /sales/add-to-cart/\<product_pk>/                        | add_to_cart      |
+| 장바구니에서 삭제    | POST     | /sales/remove-from-cart/\<product_pk>/                   | remove_from_cart |
+| 리뷰 생성        | GET/POST | /sales/\<product_pk>/review/create/                      | create_review    |
+| 리뷰 삭제        | POST     | /sales/\<product_pk>/reviews/\<review_pk>/delete_review/ | delete_review    |
+| 리뷰 수정        | GET/POST | /sales/\<product_pk>/reviews/\<review_pk>/update_review/ | update_review    |
+| 주문 / 결제      | GET      | /sales/order_payment/\<order_pk>/                        | order_payment    |
+| 주문 / 결제 취소   | POST     | /sales/delete_order/\<order_pk>/                         | delete_order     |
+| 장바구니 품목 주문하기 | GET/POST | /sales/create_order/                                     | create_order     |
+| 바로 주문하기      | GET/POST | /sales/create_ordernow/\<product_pk>/                    | create_ordernow  |
+| 주문 완료        | GET      | /salse/order_complete/                                   | order_complete   |
+| 주문 상세 페이지    | GET      | /sales/order/\<order_number>/                            | order_detail     |
+| 주문 목록        | GET      | /sales/order_list/                                       | order_list       |
+
+<br/>
+<br/>
 
 ## 11. 서비스 화면
 
@@ -507,6 +713,8 @@ MureokMureok
 ## 12. 이슈
 
 ### 패키지간 버전 충돌 문제
+
+### CKeditor 도입
 
 <br>
 <br>
